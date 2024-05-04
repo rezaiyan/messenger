@@ -39,8 +39,8 @@ class ConversationListInteractorImpl @Inject constructor(
                             val lastMessage = messages.lastOrNull()
                             UiConversation(
                                 id = conversation.id,
-                                title = lastMessage?.receiverId.orEmpty(),
-                                subtitle = lastMessage?.content.orEmpty(),
+                                title = lastMessage?.receiverId.orEmpty().truncate(),
+                                subtitle = lastMessage?.content.orEmpty().truncate(),
                             )
                         }
                 }
@@ -55,4 +55,12 @@ class ConversationListInteractorImpl @Inject constructor(
         }.flowOn(Dispatchers.IO) // Ensure this work happens on the I/O dispatcher
     }
 
+}
+
+private fun String.truncate(length: Int = 35): String {
+    return if (this.length > length) {
+        this.substring(0, length) + "..."
+    } else {
+        this
+    }
 }
