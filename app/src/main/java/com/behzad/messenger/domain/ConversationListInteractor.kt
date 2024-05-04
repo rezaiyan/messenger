@@ -1,9 +1,12 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package com.behzad.messenger.ui.main
+package com.behzad.messenger.domain
 
 import com.behzad.messenger.data.database.ConversationDao
 import com.behzad.messenger.data.database.MessageDao
+import com.behzad.messenger.ui.main.Conversations
+import com.behzad.messenger.ui.main.MainUiState
+import com.behzad.messenger.ui.main.UiConversation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

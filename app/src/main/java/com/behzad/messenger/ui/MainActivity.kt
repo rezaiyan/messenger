@@ -25,7 +25,6 @@ import com.behzad.messenger.ui.main.MainScreen
 import com.behzad.messenger.ui.theme.MessengerTheme
 import com.behzad.messenger.utils.GetUserPhoneNumberUseCase
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -72,6 +71,7 @@ class MainActivity : ComponentActivity() {
                                    arrayOf(
                                        Manifest.permission.READ_PHONE_STATE,
                                        Manifest.permission.READ_SMS,
+                                       Manifest.permission.SEND_SMS,
                                        Manifest.permission.READ_PHONE_NUMBERS
                                    )
                                )
@@ -79,7 +79,8 @@ class MainActivity : ComponentActivity() {
                                permissionLauncher.launch(
                                    arrayOf(
                                        Manifest.permission.READ_PHONE_STATE,
-                                       Manifest.permission.READ_SMS
+                                       Manifest.permission.READ_SMS,
+                                       Manifest.permission.SEND_SMS,
                                    )
                                )
 
@@ -91,10 +92,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-@Composable
-fun PermissionsRequester(onGrant: () -> Unit, onDeny: () -> Unit = {}) {
 }
 
 @ExperimentalMaterial3Api

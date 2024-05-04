@@ -1,12 +1,11 @@
 package com.behzad.messenger.ui.conversation
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.behzad.messenger.domain.MessagesInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
@@ -19,7 +18,7 @@ class ConversationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val conversationId: String = savedStateHandle.get<String>("conversationId").orEmpty()
+    private val conversationId: String = savedStateHandle.get<String>("conversationId").orEmpty()
 
     private val _event = MutableSharedFlow<ConversationUiEvent>()
     val event = _event.asSharedFlow()
@@ -43,10 +42,10 @@ class ConversationViewModel @Inject constructor(
 
 }
 
-private fun Boolean.toEvent(): ConversationUiEvent {
-    return if (this) {
+private fun String.toEvent(): ConversationUiEvent {
+    return if (isNullOrEmpty()) {
         ConversationUiEvent.SentMessage
     } else {
-        ConversationUiEvent.Error("Failed to send message")
+        ConversationUiEvent.Error(this)
     }
 }

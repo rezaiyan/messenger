@@ -13,7 +13,7 @@ interface MessageDao {
     suspend fun insertMessage(message: Message)
 
     @Query("SELECT * FROM Message WHERE id = :id")
-    suspend fun getMessage(id: Int): Message
+    suspend fun getMessage(id: String): Message
     @Query("SELECT * FROM Message WHERE conversationId = :conversationId ORDER BY createdAt ASC")
     fun getMessagesForConversation(conversationId: String): Flow<List<Message>>
 }

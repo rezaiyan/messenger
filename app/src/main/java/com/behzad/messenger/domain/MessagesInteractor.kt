@@ -1,13 +1,13 @@
-package com.behzad.messenger.ui.conversation
+package com.behzad.messenger.domain
 
 import android.util.Log
 import com.behzad.messenger.data.database.ConversationDao
 import com.behzad.messenger.data.database.MessageDao
 import com.behzad.messenger.data.database.UserDao
-import com.behzad.messenger.domain.Conversation
-import com.behzad.messenger.domain.Message
-import com.behzad.messenger.domain.MessageStatus
-import com.behzad.messenger.domain.User
+import com.behzad.messenger.ui.conversation.ConversationUiState
+import com.behzad.messenger.ui.conversation.Messages
+import com.behzad.messenger.ui.conversation.UiMessage
+import com.behzad.messenger.utils.SmsHelper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -20,13 +20,14 @@ import java.util.*
 
 interface MessagesInteractor {
     fun getConversation(conversationId: String): Flow<ConversationUiState>
-    fun sendMessage(to: String, content: String, conversationId: String?): Flow<Boolean>
+    fun sendMessage(to: String, content: String, conversationId: String?): Flow<String>
 }
 
 class MessagesInteractorImpl @Inject constructor(
     private val messagesDao: MessageDao,
     private val userDao: UserDao,
     private val conversationDao: ConversationDao,
+    private val smsHelper: SmsHelper,
 ) : MessagesInteractor {
 
     override fun getConversation(conversationId: String): Flow<ConversationUiState> {
@@ -51,7 +52,7 @@ class MessagesInteractorImpl @Inject constructor(
         }
     }
 
-    override fun sendMessage(to: String, content: String, conversationId: String?): Flow<Boolean> =
+    override fun sendMessage(to: String, content: String, conversationId: String?): Flow<String> =
         flow {
             // Generate or reuse the conversation ID
             val cId = if (conversationId.isNullOrBlank() || conversationId == "-1") {
@@ -76,11 +77,11 @@ class MessagesInteractorImpl @Inject constructor(
             // Sequentially execute insert operations
             conversationDao.insertConversation(Conversation(message.conversationId))
             messagesDao.insertMessage(message)
-
-            emit(true)  // Emit true upon successful completion of inserts
+            smsHelper.sendSMS(to, content, message.id.toString())
+            emit("")  // Emit true upon successful completion of inserts
         }.catch { exception ->
             Log.d("MessagesInteractor", "Error sending message", exception)
-            emit(false)  // Emit false if any exception occurs
+            emit(exception.message.orEmpty())  // Emit false if any exception occurs
         }
 
     private suspend fun createUserIfDoesntExist(to: String) {
