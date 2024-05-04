@@ -67,7 +67,6 @@ class MainActivity : ComponentActivity() {
 
                    LaunchedEffect(Unit) {
                        coroutineScope.launch {
-                           delay(2000L)
                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                permissionLauncher.launch(
                                    arrayOf(
